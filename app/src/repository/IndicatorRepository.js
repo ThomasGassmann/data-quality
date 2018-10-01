@@ -2,20 +2,29 @@ import gql from "graphql-tag";
 
 class IndicatorRepository {
   static getListPage(pageNumber, pageSize) {
-    return gql`{
-      allIndicators{
-        nodes {
-          id
-          name
-          description
-          executionOrder
-          flagActive
-          createdDate
-          updatedDate
-          indicatorTypeId
+    const offset = pageSize * (pageNumber - 1);
+    const query = gql`
+      query IndicatorsQuery($pageSize: Int!, $offset: Int!) {
+        allIndicators(first: $pageSize, offset: $offset) {
+          nodes {
+            id
+            name
+            description
+            executionOrder
+            flagActive
+            createdDate
+            updatedDate
+            indicatorTypeId
+          }
         }
+      }`;
+    return {
+      query: query,
+      variables: {
+        offset: offset,
+        pageSize: pageSize
       }
-    }`
+    };
   }
 
   static getFormDropdownData() {
@@ -33,7 +42,7 @@ class IndicatorRepository {
             name
           }
         }
-      }`
+      }`;
   }
 
   static insert() {
@@ -48,7 +57,7 @@ class IndicatorRepository {
             updatedDate
           }
         }
-      }`
+      }`;
   }
 }
 
